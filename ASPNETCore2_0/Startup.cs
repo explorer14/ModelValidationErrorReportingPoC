@@ -16,7 +16,7 @@ namespace ASPNETCore2_0
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(x => x.Filters.Add(new ModelBindingFailureFilter()));
+            services.AddMvc(x => x.Filters.Add(new ModelBindingFailureFilterSimple()));
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
