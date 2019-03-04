@@ -6,6 +6,12 @@ namespace ASPNETCore2_0
 {
     public class ModelBindingFailureFilterSimple : IActionFilter
     {
+        private readonly ILogger _logger;
+
+        public ModelBindingFailureFilterSimple(ILogger logger)
+        {
+            _logger = logger;
+        }
         public void OnActionExecuted(ActionExecutedContext context)
         {
         }
@@ -14,13 +20,18 @@ namespace ASPNETCore2_0
         {
             if (!context.ModelState.IsValid)
             {
-                context.Result = new BadRequestObjectResult(
-                    context
+                var modelErrors = context
                     .ModelState
                     .ToDictionary(
-                        x=>x.Key, 
-                        y=>y.Value.Errors.Select(
-                            z=>z.Exception.Message).ToList()));
+                        x => x.Key,
+                        y => y.Value.Errors.Select(
+                            z => z.Exception.Message).ToList());
+
+                _logger.Error(
+                    "Model validation failed with following errors {@errors}",
+                    modelErrors);
+
+                context.Result = new BadRequestObjectResult(modelErrors);
             }
         }
     }
